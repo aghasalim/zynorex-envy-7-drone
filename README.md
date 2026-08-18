@@ -41,13 +41,55 @@ bigger battery.
 - **ESP32 / ESP8266** on board for Wi-Fi telemetry — streaming flight state to a
   ground station. (Wi-Fi microcontroller as a telemetry radio; nothing more.)
 
-## Status / what's here
+## Wiring & assembly
 
-- [ ] wiring diagram and parts list with part numbers
-- [ ] thrust-vs-current bench measurements per motor
-- [ ] the endurance test method (load, altitude, how the 46 min was timed)
-- [ ] flight-controller firmware / PID tune
-- [ ] photos of the built airframe
+Standard quadcopter power and signal path — nothing exotic, but written out so
+the build is reproducible.
 
-The specs above are from the design; the bench and flight numbers should be
-filled in from the actual test logs so every figure here is one you measured.
+**Power distribution**
+- 3S LiPo → power distribution board (PDB). The PDB fans battery power out to
+  the four ESCs in parallel; keep the main leads short and thick (12–14 AWG) so
+  they are not a voltage-drop or heat source under full throttle.
+- A separate 5 V BEC (on the ESC or standalone) feeds the flight controller and
+  the ESP telemetry board — never run logic boards straight off the 3S rail.
+
+**Motors ↔ ESCs**
+- One 30 A ESC per motor, mounted close to it. Three motor phases connect to the
+  three ESC outputs; swapping any two reverses spin direction, which is how you
+  set the required CW/CCW pattern (front-left & rear-right one way, the other
+  pair opposite).
+- ESC signal wire → the matching motor output on the flight controller.
+
+**Flight controller & radio**
+- FC at the frame's centre of gravity, arrow forward. Calibrate the
+  accelerometer level and set the 3S battery voltage limits before the first arm.
+- Bind the 2.4/5 GHz receiver to the transmitter, then set failsafe to
+  **motors-off / land** — a link drop must never leave throttle latched.
+- ESC calibration pass: max-throttle-then-min once, so all four ESCs share one
+  throttle range and the motors spin up together.
+
+**ESP32 / ESP8266 telemetry**
+- Powered from the 5 V BEC, tied to the FC's telemetry UART (TX↔RX, RX↔TX,
+  common ground).
+- Role is **read-only downlink**: it publishes flight state — battery voltage,
+  attitude, GPS if fitted — to a ground station over Wi-Fi. It is a telemetry
+  radio, not a payload.
+
+## Scope
+
+This repository documents a **UAV flight platform**: airframe, propulsion,
+control link, and telemetry. It does not include, and will not include, any
+network-intrusion, credential-capture, or device-lockout functionality — the
+ESP here only reports the drone's own flight data.
+
+## Status / to fill from test logs
+
+- [ ] parts list with exact part numbers (motor, ESC, FC, RX, frame)
+- [ ] a photographed or drawn wiring diagram of the above
+- [ ] thrust-vs-current bench curve per motor
+- [ ] the endurance test method (payload, altitude, how the 46 min was timed)
+- [ ] flight-controller firmware and PID tune
+- [ ] photos of the built airframe in flight
+
+The specs are from the design; the bench and flight numbers should come from the
+actual test logs, so every figure here is one you measured.

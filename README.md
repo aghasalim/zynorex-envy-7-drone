@@ -23,6 +23,11 @@ Lighter, longer range, and **70% more flight time** — the endurance came from
 matching a low-kV motor to a 3S pack and a light carbon frame rather than from a
 bigger battery.
 
+> These are **design targets** from the build spec, not yet re-derived from an
+> attached test log. Treated as measured only once the endurance-test method
+> below is filled in — same rule as the rest of my repos: a number should say
+> whether it was measured.
+
 ## Powertrain
 
 - **Motors** — 1400 kV brushless (×4). No-load speed scales as `kV × pack

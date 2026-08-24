@@ -51,6 +51,56 @@ bigger battery.
 Standard quadcopter power and signal path — nothing exotic, but written out so
 the build is reproducible.
 
+```mermaid
+flowchart TD
+    BAT["3S LiPo<br/>12.6 V full, 11.1 V nominal"]
+    PDB["Power distribution board<br/>12-14 AWG, short leads"]
+    BEC["5 V BEC"]
+
+    ESC1["ESC 30 A<br/>SimonK"]
+    ESC2["ESC 30 A<br/>SimonK"]
+    ESC3["ESC 30 A<br/>SimonK"]
+    ESC4["ESC 30 A<br/>SimonK"]
+
+    M1["Motor 1400 kV<br/>front-left · CW"]
+    M2["Motor 1400 kV<br/>front-right · CCW"]
+    M3["Motor 1400 kV<br/>rear-left · CCW"]
+    M4["Motor 1400 kV<br/>rear-right · CW"]
+
+    FC["Flight controller<br/>at CG, arrow forward"]
+    RX["2.4 / 5 GHz receiver<br/>failsafe: motors-off / land"]
+    TX["Transmitter<br/>up to 1250 m"]
+    ESP["ESP32 / ESP8266<br/>read-only downlink"]
+    GS["Ground station<br/>Wi-Fi telemetry"]
+
+    BAT ==> PDB
+    PDB ==> ESC1 & ESC2 & ESC3 & ESC4
+    PDB ==> BEC
+    BEC ==> FC
+    BEC ==> ESP
+
+    ESC1 ==> M1
+    ESC2 ==> M2
+    ESC3 ==> M3
+    ESC4 ==> M4
+
+    TX -. "radio link" .-> RX
+    RX --> FC
+    FC -- "PWM x4" --> ESC1 & ESC2 & ESC3 & ESC4
+    FC <-- "UART · TX-RX crossed" --> ESP
+    ESP -. "flight state" .-> GS
+
+    classDef power fill:#b2182b,stroke:#7f0f20,color:#fff
+    classDef logic fill:#2166ac,stroke:#14406b,color:#fff
+    classDef radio fill:#4d4d4d,stroke:#2b2b2b,color:#fff
+    class BAT,PDB,BEC,ESC1,ESC2,ESC3,ESC4,M1,M2,M3,M4 power
+    class FC,ESP logic
+    class TX,RX,GS radio
+```
+
+Thick edges carry current, thin edges carry signal. The one rule worth repeating
+from the text below: logic boards never touch the 3S rail, they come off the BEC.
+
 **Power distribution**
 - 3S LiPo → power distribution board (PDB). The PDB fans battery power out to
   the four ESCs in parallel; keep the main leads short and thick (12–14 AWG) so
@@ -90,7 +140,8 @@ ESP here only reports the drone's own flight data.
 ## Status / to fill from test logs
 
 - [ ] parts list with exact part numbers (motor, ESC, FC, RX, frame)
-- [ ] a photographed or drawn wiring diagram of the above
+- [x] a drawn wiring diagram of the above — the flowchart under [Wiring & assembly](#wiring--assembly)
+- [ ] a photograph of the same, on the actual airframe
 - [ ] thrust-vs-current bench curve per motor
 - [ ] the endurance test method (payload, altitude, how the 46 min was timed)
 - [ ] flight-controller firmware and PID tune

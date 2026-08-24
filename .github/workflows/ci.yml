@@ -1,0 +1,38 @@
+name: ci
+
+# There is no code here to test. What can break in a documentation repository is
+# the diagram failing to render and the links going stale, so that is what runs.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Links rot without anyone touching the repo.
+    - cron: "0 7 1 * *"
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Install diagram parser
+        working-directory: ci
+        run: npm install --no-audit --no-fund
+
+      # GitHub renders an error box in place of an unparseable diagram, which is
+      # worse than no diagram and is invisible until someone looks at the page.
+      - name: Mermaid parses
+        run: node ci/check-mermaid.mjs README.md
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Links resolve
+        run: python ci/check-links.py

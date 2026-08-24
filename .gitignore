@@ -1,3 +1,2 @@
-.DS_Store
-*.pyc
-__pycache__/
+ci/node_modules/
+ci/package-lock.json

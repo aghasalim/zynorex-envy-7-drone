@@ -151,3 +151,15 @@ ESP here only reports the drone's own flight data.
 
 The specs are from the design; the bench and flight numbers should come from the
 actual test logs, so every figure here is one you measured.
+
+## References
+
+This is a build log, so most of what is here is measurement rather than
+literature. Two sources actually bear on the design.
+
+- **Leishman. Principles of Helicopter Aerodynamics, 2nd edition. Cambridge University Press, 2006.** Momentum theory and disc loading, which is the reason a larger rotor at lower RPM produces the same thrust for less power, and therefore the reason the endurance figure here is what it is.
+- **Manufacturer datasheets for the motors, ESCs and cells used.** The 1400 kV rating, the 30 A ESC limit and the 3S pack voltages in the build section are read from these rather than derived.
+
+The 46 minute endurance number is measured on this airframe, not taken from any
+source. The test method is listed as outstanding work in the README, which is
+where it should be read.

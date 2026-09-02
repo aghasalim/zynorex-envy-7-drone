@@ -12,6 +12,7 @@ backed by what, and every entry is sourced from the README's own status list.
 
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 
 import matplotlib
@@ -23,22 +24,15 @@ import matplotlib.pyplot as plt
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 
-#: (claim, value, evidence class). Evidence classes are deliberately coarse:
-#: either a number came off a test log, or it came off the build spec.
+#: Every claim, its value and what backs it, read from the machine readable
+#: table the README and this figure are both drawn from. Evidence classes are
+#: deliberately coarse: either a number came off a test log, or it came off the
+#: build spec. verify/ recomputes this file's counts in five other languages.
 CLAIMS = [
-    ("all-up weight", "1382 g", "spec"),
-    ("control range", "up to 1250 m", "spec"),
-    ("endurance", "46 min", "spec"),
-    ("motor kV", "1400 kV x4", "component"),
-    ("ESC rating", "30 A, SimonK", "component"),
-    ("battery", "3S LiPo, 12.6 V full", "component"),
-    ("frame", "carbon fibre", "component"),
-    ("wiring and signal path", "documented", "documented"),
-    ("failsafe behaviour", "motors-off / land", "documented"),
-    ("thrust-vs-current curve", "not measured", "missing"),
-    ("endurance test method", "not measured", "missing"),
-    ("PID tune", "not recorded", "missing"),
-    ("in-flight photographs", "not taken", "missing"),
+    (row["claim"], row["value"], row["evidence"])
+    for row in csv.DictReader(
+        (ROOT / "docs" / "claims.csv").open(encoding="utf-8")
+    )
 ]
 
 STYLE = {

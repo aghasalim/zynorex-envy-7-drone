@@ -1,0 +1,14 @@
+id,claim,value,evidence,build_value,reference_value,unit
+weight,all-up weight,1382 g,spec,1382,1487,g
+range,control range,up to 1250 m,spec,1250,500,m
+endurance,endurance,46 min,spec,46,27,min
+motor_kv,motor kV,1400 kV x4,component,,,
+esc_rating,ESC rating,"30 A, SimonK",component,,,
+battery,battery,"3S LiPo, 12.6 V full",component,,,
+frame,frame,carbon fibre,component,,,
+wiring,wiring and signal path,documented,documented,,,
+failsafe,failsafe behaviour,motors-off / land,documented,,,
+thrust_curve,thrust-vs-current curve,not measured,missing,,,
+endurance_method,endurance test method,not measured,missing,,,
+pid_tune,PID tune,not recorded,missing,,,
+flight_photos,in-flight photographs,not taken,missing,,,

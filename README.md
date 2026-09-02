@@ -134,6 +134,22 @@ from the text below: logic boards never touch the 3S rail, they come off the BEC
   attitude, GPS if fitted, to a ground station over Wi-Fi. It is a telemetry
   radio, not a payload.
 
+## The claims ledger
+
+[`docs/claims.csv`](docs/claims.csv) is the single source for every figure
+quoted above. These are the values recomputed from it.
+
+| what | recomputed value |
+| --- | --- |
+| claim rows in docs/claims.csv | 13 |
+| design-target claims | 3 |
+| component-rating claims | 4 |
+| documented claims | 2 |
+| open items | 4 |
+| endurance gain over the reference | 70.37% |
+| weight saved against the reference | 105 g |
+| control-range multiple | 2.5x |
+
 ## Scope
 
 This repository documents a **UAV flight platform**: airframe, propulsion,

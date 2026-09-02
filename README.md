@@ -44,6 +44,26 @@ and CI fails the build if any of them disagree.
 - **Frame & props**: carbon fibre: light, and stiff enough to hold prop
   alignment under load.
 
+## Parts list
+
+The ratings below are read off the manufacturer datasheets and are what the
+sizing argument in the powertrain section rests on. The exact part numbers are
+not recorded yet, so they are tracked in
+[`docs/claims.csv`](docs/claims.csv) as open items rather than guessed at here.
+
+| part | qty | rating as built | part number |
+| --- | --- | --- | --- |
+| motor | 4 | 1400 kV brushless | not recorded |
+| ESC | 4 | 30 A, SimonK firmware | not recorded |
+| flight controller | 1 | mounted at CG, arrow forward | not recorded |
+| receiver | 1 | 2.4 / 5 GHz, failsafe motors-off / land | not recorded |
+| frame | 1 | carbon fibre | not recorded |
+| battery | 1 | 3S LiPo, 12.6 V full | not recorded |
+| telemetry board | 1 | ESP32 / ESP8266, read-only downlink | not recorded |
+
+Filling the last column in is what turns the powertrain section from a sizing
+argument into a build someone else can order the parts for.
+
 ## Control link
 
 - 2.4 GHz / 5 GHz radio, independent command to each motor.
@@ -102,6 +122,8 @@ flowchart TD
     class TX,RX,GS radio
 ```
 
+![power and signal path](docs/wiring.png)
+
 Thick edges carry current, thin edges carry signal. The one rule worth repeating
 from the text below: logic boards never touch the 3S rail, they come off the BEC.
 
@@ -141,11 +163,11 @@ quoted above. These are the values recomputed from it.
 
 | what | recomputed value |
 | --- | --- |
-| claim rows in docs/claims.csv | 13 |
+| claim rows in docs/claims.csv | 18 |
 | design-target claims | 3 |
 | component-rating claims | 4 |
 | documented claims | 2 |
-| open items | 4 |
+| open items | 9 |
 | endurance gain over the reference | 70.37% |
 | weight saved against the reference | 105 g |
 | control-range multiple | 2.5x |
@@ -159,7 +181,9 @@ ESP here only reports the drone's own flight data.
 
 ## Status / to fill from test logs
 
-- [ ] parts list with exact part numbers (motor, ESC, FC, RX, frame)
+- [ ] parts list with exact part numbers (motor, ESC, FC, RX, frame). The
+      table is in place under [Parts list](#parts-list); the part numbers
+      themselves are the gap, and each is tracked as an open item
 - [x] a drawn wiring diagram of the above, the flowchart under [Wiring & assembly](#wiring--assembly)
 - [ ] a photograph of the same, on the actual airframe
 - [ ] thrust-vs-current bench curve per motor

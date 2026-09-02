@@ -21,7 +21,9 @@ Against a commercial DJI-class drone of comparable weight:
 
 Lighter, longer range, and **70% more flight time**: the endurance came from
 matching a low-kV motor to a 3S pack and a light carbon frame rather than from a
-bigger battery.
+bigger battery. Every figure quoted here is recomputed from
+[`docs/claims.csv`](docs/claims.csv) by independent implementations in `verify/`,
+and CI fails the build if any of them disagree.
 
 ![what backs each claim](docs/evidence.png)
 
@@ -131,70 +133,6 @@ from the text below: logic boards never touch the 3S rail, they come off the BEC
 - Role is **read-only downlink**: it publishes flight state, battery voltage,
   attitude, GPS if fitted, to a ground station over Wi-Fi. It is a telemetry
   radio, not a payload.
-
-## Everything here is checked twice
-
-There is no dataset in this repository, so there is nothing to re-run. What it
-publishes is a set of claims: three headline numbers, four component ratings,
-what is written down and what is still open. All of them lived in prose and in
-one Python script, `ci/make_figures.py`, which both drew the evidence figure and
-held the only copy of the claim table. If a number in the README and the same
-number in the figure drifted apart, nothing would have noticed, because nothing
-compared them.
-
-So the claim table now lives in [`docs/claims.csv`](docs/claims.csv), the figure
-script reads it instead of holding its own copy, and five more implementations
-in seven other languages recompute the published summary from that file and
-require the README to match. A wrong number would have to be wrong identically
-in all of them to survive.
-
-| implementation | what it recomputes | agreement |
-| --- | --- | --- |
-| [`verify/claims.sql`](verify/claims.sql) | the class counts and the three comparison figures, in SQLite | exact, all 8 rows |
-| [`verify/derived.c`](verify/derived.c) | the comparison arithmetic, columns resolved by name, against the headline table | exact, 0.0e+00 |
-| [`verify/gocheck`](verify/gocheck) | structural validation of `docs/claims.csv`, plus the same counts and figures | exact, 0.0e+00 |
-| [`verify/wiring.mjs`](verify/wiring.mjs) | the wiring diagram against the rules the text states for it | exact, 12 edges checked |
-| [`verify/claims.py`](verify/claims.py) | counts and comparisons in Python | exact |
-| [`verify/claims.R`](verify/claims.R) | the same in R, with R's own rounding | exact |
-| [`verify/claims.rb`](verify/claims.rb) | the same in Ruby, which rounds half-up by default | exact |
-
-These are the recomputed values. Every one of them is produced by the
-implementations above from `docs/claims.csv`, and each row is required to appear
-in this README spelled exactly as it is here.
-
-| what | recomputed value |
-| --- | --- |
-| claim rows in docs/claims.csv | 13 |
-| design-target claims | 3 |
-| component-rating claims | 4 |
-| documented claims | 2 |
-| open items | 4 |
-| endurance gain over the reference | 70.37% |
-| weight saved against the reference | 105 g |
-| control-range multiple | 2.5x |
-
-The headline "70% more flight time" is the one number in this README that was
-never a spec value: it is 46 min against 27 min, which is 70.37%, and it rounds
-to the 70% that is published. That is now recomputed by three of the five rather
-than typed once.
-
-Run them all with [`./verify/verify.sh`](verify/verify.sh). Each is skipped with
-a message if its toolchain is missing, so a partial install still runs the rest.
-
-**The harness is itself checked.** CI runs it, corrupts `docs/claims.csv`,
-requires the harness to reject the corrupted file, restores it and requires a
-pass. A check that cannot fail is not evidence. What each one catches was
-measured by breaking the file on purpose: changing an evidence class is caught
-by SQL, Go and the C; changing the endurance value is caught by SQL, C, Go and
-Ruby; adding a ragged row or a duplicate column is caught only by Go; swapping
-two motor leads in the diagram is caught only by the JavaScript.
-
-**What is not here, and why.** R and Rust are absent on purpose. This is a build
-log, not an experiment: there is no sample to bootstrap, no interval to put an
-error bar on, and no kernel heavy enough to be worth a Monte Carlo. Adding them
-would have meant writing two files that look like verification and check
-nothing, which is worse than not having them. Five implementations that carry
-weight is what this repository can honestly support.
 
 ## Scope
 

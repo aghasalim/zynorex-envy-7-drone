@@ -2,8 +2,7 @@
 
 A from-scratch quadcopter build: powertrain sizing, frame, radio link, and a
 measured flight-endurance result that beats a commercial reference of similar
-weight. Built by a third-year Applied Computer Science (AI) student with
-Çingiz Abdullazadə.
+weight. Built with Çingiz Abdullazadə.
 
 > Build log and engineering only. This documents the airframe, propulsion and
 > control link, how it flies and how long. It is not a payload or security

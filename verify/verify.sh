@@ -18,10 +18,46 @@ run () {
     if "$@"; then pass=$((pass + 1)); else fail=$((fail + 1)); fi
 }
 
+# The SQL prints one "label|value" line per figure it recomputed. Every value
+# has to appear in README.md spelled exactly that way, which is the check the
+# claims.sql header has always claimed this function performs. It did not: the
+# body ended in an echo, so the function returned 0 no matter what SQLite said,
+# including when SQLite failed outright.
 check_sql () {
-    local out
+    local out rc missing=0 n=0 label value
     out=$(sqlite3 -init verify/claims.sql :memory: "" < /dev/null 2>&1 | tr -d '\r')
-    echo "$out"
+    rc=$?
+    if [ "$rc" -ne 0 ]; then
+        printf 'sqlite3 exited %d\n%s\n' "$rc" "$out"
+        return 1
+    fi
+    if [ -z "$out" ] || printf '%s' "$out" | grep -qi '^Error'; then
+        printf 'sqlite3 produced no usable output:\n%s\n' "$out"
+        return 1
+    fi
+    while IFS='|' read -r label value; do
+        [ -n "$label" ] || continue
+        n=$((n + 1))
+        if [ -z "$value" ]; then
+            printf '  FAIL %-38s recomputed nothing\n' "$label"
+            missing=$((missing + 1))
+        elif grep -qF -- "$value" README.md; then
+            printf '  ok   %-38s %s\n' "$label" "$value"
+        else
+            printf '  FAIL %-38s %s is not in README.md\n' "$label" "$value"
+            missing=$((missing + 1))
+        fi
+    done <<< "$out"
+    if [ "$n" -eq 0 ]; then
+        echo "no figures came back from the SQL"
+        return 1
+    fi
+    if [ "$missing" -gt 0 ]; then
+        printf '%d of %d figures are not in README.md as the SQL spells them\n' \
+               "$missing" "$n"
+        return 1
+    fi
+    printf 'SQL reproduces %d figures, each one present in README.md\n' "$n"
 }
 
 check_c () {
